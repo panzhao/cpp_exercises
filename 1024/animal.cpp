@@ -1,18 +1,57 @@
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
 class Animal
 {
     public:
-        Animal(int m_age = 1):age(m_age)
-	{
+        Animal(const char *m_name, int m_age = 1)
+	:age(m_age), name(NULL)
+	{   
+	    if (NULL == m_name)
+	    {
+	        name = new char[1];
+		*name = '\0';
+		return;
+	    }
+
+	    name = new char[strlen(m_name) + 1];
+	    strcpy(name, m_name);
+	    
 	    cout << "Animal constructure!" << endl;
 	}
 
-        virtual void sleep()            //虚函数 类似 包含void (*sleep)()绑定
+	Animal(Animal &temp)
 	{
-	    cout<<"animal sleep"<<endl;
+	    if (NULL == temp.name)
+	    {
+	        name = new char[1];
+		*name = '\0';
+		return;
+	    }
+
+	    name = new char[strlen(temp.name) + 1];
+            strcpy(name, temp.name);
+	    
+	    age = temp.age;
+	}
+
+	~Animal()
+	{
+	    delete [] name;
+	    cout << "Animal unconstructure!" << endl;
+	}
+	
+	void show_info()
+	{
+	    cout << "Animal age:" << age << endl;
+	    cout << "Animal name:" << name << endl;
+	}
+#if 0
+        virtual void sleep()
+	{
+	    cout << "animal sleep" << endl;
 	}
 
 	void show_info()
@@ -20,21 +59,24 @@ class Animal
 	    cout << "Animal age:" << age << endl;
 	}
     
-    protected:                          //被保护 的区域 可在 继承他的函数中调用
+    protected:
 	void eat()
 	{
 	    cout<<"animal eat"<<endl;
 	}
     
     private:
-        int age;
-
 	void walk()
 	{
 	    cout<<"animal walk"<<endl;
 	}
+#endif
+    private:
+        char *name;
+        int age;
 };
 
+#if 0
 class Dog:public Animal
 {
     public:
@@ -44,9 +86,14 @@ class Dog:public Animal
 	    cout << "Dog age:" << age << endl;
         }
 
+	~Dog()
+	{
+	    cout << "Dog unconstructure!" << endl;
+	}
+
         void sleep()
 	{
-	    cout<<"Dog sleep"<<endl;
+	    cout << "Dog sleep" << endl;
 	}
 
     private:
@@ -62,11 +109,13 @@ class Person:public Animal
 	    cout<<"person sleep"<<endl;
 	}
 };
+#endif 
 
 int main(void)
 {
-    Dog dg(30, 10);
-    dg.show_info();
+    Animal an("lucy", 15);
+    Animal bn(an);
+    bn.show_info();
 
     return 0;
 }
